@@ -5,26 +5,51 @@ import SearchPage from "./pages/SearchPage/SearchPage";
 import { login as apiLogin, logout as apiLogout } from "./services/api";
 import { User } from "./types";
 
-const SESSION_DURATION = 3600; // session duration in seconds (1 hour)
+const SESSION_DURATION = 3600; // session duration in seconds (for testing; use 3600 for 1 hour)
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loginTime, setLoginTime] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+  // Initialize user from localStorage if available.
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  // Initialize loginTime from localStorage, if available.
+  const [loginTime, setLoginTime] = useState<number | null>(() => {
+    const storedLogin = localStorage.getItem("loginTime");
+    return storedLogin ? Number(storedLogin) : null;
+  });
+
+  // Initialize expirationTime from localStorage if available; otherwise, compute a new one.
+  const [expirationTime, setExpirationTime] = useState<number>(() => {
+    const storedExp = localStorage.getItem("expirationTime");
+    // If there's a stored expiration time, use it.
+    if (storedExp) {
+      return Number(storedExp);
+    }
+    // Otherwise, if no loginTime is stored, compute a new expiration based on now.
+    return Date.now() + SESSION_DURATION * 1000;
+  });
+
   const [sessionTimeLeft, setSessionTimeLeft] =
     useState<number>(SESSION_DURATION);
   const [sessionExpired, setSessionExpired] = useState<boolean>(false);
-  const navigate = useNavigate();
 
-  // Handle login: record the login time so we can start the timer.
+  // Handle login: call the API, store user info and timestamps in localStorage, and start the timer.
   const handleLogin = async (name: string, email: string) => {
     try {
       await apiLogin(name, email);
-      const loggedInUser = { name, email };
+      const loggedInUser: User = { name, email };
       setUser(loggedInUser);
-
+      localStorage.setItem("user", JSON.stringify(loggedInUser));
       const now = Date.now();
       setLoginTime(now);
-
+      localStorage.setItem("loginTime", now.toString());
+      const expTime = now + SESSION_DURATION * 1000;
+      setExpirationTime(expTime);
+      localStorage.setItem("expirationTime", expTime.toString());
       setSessionTimeLeft(SESSION_DURATION);
       navigate("/search");
     } catch (error) {
@@ -33,7 +58,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Handle logout: clear user state and navigate to login.
+  // Handle logout: clear state and localStorage, then navigate to login.
   const handleLogout = useCallback(async () => {
     try {
       await apiLogout();
@@ -42,37 +67,43 @@ const App: React.FC = () => {
     }
     setUser(null);
     setLoginTime(null);
+    setExpirationTime(Date.now() + SESSION_DURATION * 1000);
     setSessionTimeLeft(SESSION_DURATION);
     setSessionExpired(false);
+    localStorage.removeItem("user");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("loginTime");
+    localStorage.removeItem("expirationTime");
     navigate("/login", { replace: true });
-  }, []);
+  }, [navigate]);
 
-  // Set up the session timer once the user is logged in.
+  // Set up the session timer using the stored expirationTime.
   useEffect(() => {
-    if (user && loginTime) {
-      const intervalId = setInterval(() => {
-        const elapsed = (Date.now() - loginTime) / 1000; // elapsed time in seconds
-        const remaining = SESSION_DURATION - elapsed;
+    if (user && loginTime && expirationTime) {
+      const updateTimer = () => {
+        const now = Date.now();
+        const remaining = Math.floor((expirationTime - now) / 1000);
         if (remaining <= 0) {
-          // Session has expired.
           setSessionTimeLeft(0);
           setSessionExpired(true);
-          clearInterval(intervalId);
         } else {
-          setSessionTimeLeft(Math.floor(remaining));
+          setSessionTimeLeft(remaining);
         }
-      }, 1000);
+      };
+
+      updateTimer(); // run immediately on mount
+      const intervalId = setInterval(updateTimer, 1000);
       return () => clearInterval(intervalId);
     }
-  }, [user, loginTime]);
+  }, [user, loginTime, expirationTime]);
 
   return (
     <>
-      {/* Display the session timer if the user is logged in */}
+      {/* Display the session timer if the user is logged in and session is active */}
       {user && !sessionExpired && (
         <div
           style={{
-            position: "fixed",
+            position: "absolute",
             top: "10px",
             right: "10px",
             background: "#eee",
@@ -110,10 +141,11 @@ const App: React.FC = () => {
               textAlign: "center",
               maxWidth: "300px",
               width: "80%",
+              fontSize: "14px",
             }}
           >
             <p>Your session has expired. Please log in again.</p>
-            <button onClick={handleLogout}>Login Again</button>
+            <button onClick={handleLogout}>Log In Again</button>
           </div>
         </div>
       )}

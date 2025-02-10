@@ -19,34 +19,38 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <div className={styles.input_container}>
-          <label htmlFor="login-name">
-            Name:
-            <input
-              id="login-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className={styles.input}
-              placeholder="Enter your name"
-            />
-          </label>
+          <label htmlFor="login-name">Name</label>
+          <input
+            id="login-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className={styles.input}
+            placeholder="Enter your name"
+          />
         </div>
         <div className={styles.input_container}>
-          <label htmlFor="login-email">
-            Email:
-            <input
-              id="login-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={styles.input}
-              placeholder="Enter your email"
-            />
-          </label>
+          <label htmlFor="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className={styles.input}
+            placeholder="Enter your email"
+          />
         </div>
-        <button type="submit">Login</button>
+        <div className={styles.button_container}>
+          <button
+            type="submit"
+            className={styles.submit_btn}
+            disabled={name.trim() === "" || email.trim() === ""}
+          >
+            Log in
+          </button>
+        </div>
       </form>
     </div>
   );

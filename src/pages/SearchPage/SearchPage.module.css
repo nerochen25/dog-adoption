@@ -1,0 +1,47 @@
+.root {
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout_btn,
+.sort_toggle {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0.5rem 0.6rem;
+  color: black;
+  font-size: 0.8rem;
+  background-color: transparent;
+}
+
+.logout_btn:hover,
+.sort_toggle:hover {
+  background-color: black;
+  color: white;
+}
+
+.logout_btn:disabled,
+.sort_toggle:disabled {
+  background-color: lightgrey;
+  pointer-events: none;
+  color: white;
+  border: none;
+}
+
+.filter_panel {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select,
+.sort_toggle {
+  padding: 0.2rem 0.4rem;
+}

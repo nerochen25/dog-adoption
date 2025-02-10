@@ -1,0 +1,32 @@
+.root {
+    margin-top: 1rem;
+    border: 1px solid #000;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.favorite_list {
+    display: flex;
+    gap: 1rem;
+}
+
+.generate_match_btn {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0.5rem 0.6rem;
+  color: black;
+  font-size: 0.8rem;
+  background-color: transparent;
+}
+
+.generate_match_btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.generate_match_btn:disabled {
+  background-color: lightgrey;
+  pointer-events: none;
+  color: white;
+  border: none;
+}

@@ -1,0 +1,31 @@
+.root {
+  margin-top: 1rem;
+}
+
+.pagination_label {
+  margin: 0 1rem;
+}
+
+.prev_btn,
+.next_btn {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0.5rem 0.6rem;
+  color: black;
+  font-size: 0.8rem;
+  background-color: transparent;
+}
+
+.prev_btn:hover,
+.next_btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.prev_btn:disabled,
+.next_btn:disabled {
+  background-color: lightgrey;
+  pointer-events: none;
+  color: white;
+  border: none;
+}
