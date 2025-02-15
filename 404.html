@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redirecting...</title>
   <script>
-    window.location.replace("/dog-adoption" + window.location.pathname + window.location.search);
+    var path = window.location.pathname;
+    var repo = "/dog-adoption";
+
+    if (!path.startsWith(repo)) {
+      window.location.replace(repo + path + window.location.search);
+    }
   </script>
 </head>
 <body>
