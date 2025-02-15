@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from "react";
 import styles from "./LoginPage.module.css";
+import Button from "../../components/Button/Button";
 
 interface LoginPageProps {
   onLogin: (name: string, email: string) => void;
@@ -16,7 +17,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   return (
     <div className={styles.root}>
-      <h1>Login</h1>
+      <h1>Log In</h1>
       <form onSubmit={handleSubmit}>
         <div className={styles.input_container}>
           <label htmlFor="login-name">Name</label>
@@ -43,13 +44,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           />
         </div>
         <div className={styles.button_container}>
-          <button
+          <Button
             type="submit"
-            className={styles.submit_btn}
             disabled={name.trim() === "" || email.trim() === ""}
           >
             Log in
-          </button>
+          </Button>
         </div>
       </form>
     </div>

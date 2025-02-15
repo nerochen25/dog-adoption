@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Pagination.module.css";
+import Button from "../Button/Button";
 
 interface PaginationProps {
   onNext: () => void;
@@ -16,13 +17,19 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
   return (
     <div className={styles.root}>
-      <button onClick={onPrev} className={styles.prev_btn} disabled={currentPage === 1}>
-        Previous
-      </button>
-      <span className={styles.pagination_label}>{`${currentPage} / ${totalPages}`}</span>
-      <button onClick={onNext} className={styles.next_btn} disabled={currentPage === totalPages}>
+      <Button onClick={onPrev} size="small" disabled={currentPage === 1}>
+        Prev
+      </Button>
+      <span
+        className={styles.pagination_label}
+      >{`${currentPage} / ${totalPages}`}</span>
+      <Button
+        onClick={onNext}
+        size="small"
+        disabled={currentPage === totalPages}
+      >
         Next
-      </button>
+      </Button>
     </div>
   );
 };

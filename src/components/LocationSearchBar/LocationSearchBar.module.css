@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.label {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.input {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.loading {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.select {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

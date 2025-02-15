@@ -1,39 +1,31 @@
 import { Dog } from "../types";
-
-const API_BASE = "https://frontend-take-home-service.fetch.com";
+import { API_BASE } from "../utils/constants";
 
 export async function login(name: string, email: string): Promise<void> {
   const response = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // Ensure cookies are sent and received
+    credentials: "include",
     body: JSON.stringify({ name, email }),
   });
 
   if (!response.ok) {
-    // Optionally, you can log the response status or text here for debugging.
     const errorText = await response.text();
     throw new Error(`Login failed: ${response.status} ${errorText}`);
   }
-  // No need to parse response body because the auth cookie is set automatically.
   return;
 }
 
 export async function logout(): Promise<void> {
   const response = await fetch(`${API_BASE}/auth/logout`, {
     method: "POST",
-    credentials: "include", // ensure cookies are sent
+    credentials: "include",
   });
 
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Logout failed: ${response.status} ${errorText}`);
   }
-
-  // The logout endpoint returns plain text ("OK"), so we don't parse JSON.
-  // If needed, you could also do:
-  // const text = await response.text();
-  // console.log('Logout response:', text);
 
   return;
 }
@@ -48,8 +40,6 @@ export async function fetchBreeds(): Promise<string[]> {
   return response.json();
 }
 
-// src/services/api.ts
-
 export interface SearchParams {
   breeds?: string[];
   zipCodes?: string[];
@@ -57,7 +47,7 @@ export interface SearchParams {
   ageMax?: number;
   size?: number;
   from?: string;
-  sort?: string; // e.g., 'breed:asc', 'name:desc', etc.
+  sort?: string;
 }
 
 export interface SearchResponse {
@@ -76,7 +66,6 @@ export async function searchDogs(
     // If a string is provided, assume it's a relative URL returned by the API.
     url = `${API_BASE}${paramsOrUrl}`;
   } else {
-    // Build a query string from the parameters.
     const query = new URLSearchParams();
 
     if (paramsOrUrl.breeds && paramsOrUrl.breeds.length > 0) {
@@ -106,7 +95,7 @@ export async function searchDogs(
 
   const response = await fetch(url, {
     method: "GET",
-    credentials: "include", // Include cookies, etc.
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -144,5 +133,90 @@ export async function matchDogs(favoriteIds: string[]): Promise<MatchResponse> {
   if (!response.ok) {
     throw new Error("Failed to generate match");
   }
+  return response.json();
+}
+
+export interface Location {
+  zip_code: string;
+  latitude: number;
+  longitude: number;
+  city: string;
+  state: string;
+  county: string;
+}
+
+export async function fetchLocationsByZipCodes(
+  zipCodes: string[]
+): Promise<Location[]> {
+  const API_BASE = "https://frontend-take-home-service.fetch.com";
+  const response = await fetch(`${API_BASE}/locations`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(zipCodes),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to fetch locations: ${response.status} ${errorText}`
+    );
+  }
+
+  return response.json();
+}
+
+export interface Coordinates {
+  lat: number;
+  lon: number;
+}
+
+export interface Location {
+  zip_code: string;
+  latitude: number;
+  longitude: number;
+  city: string;
+  state: string;
+  county: string;
+}
+
+export interface LocationSearchParams {
+  city?: string;
+  states?: string[];
+  geoBoundingBox?: {
+    top?: Coordinates;
+    left?: Coordinates;
+    bottom?: Coordinates;
+    right?: Coordinates;
+    bottom_left?: Coordinates;
+    top_left?: Coordinates;
+  };
+  size?: number;
+  from?: number;
+}
+
+export interface LocationSearchResponse {
+  results: Location[];
+  total: number;
+}
+
+export async function searchLocations(
+  params: LocationSearchParams = {}
+): Promise<LocationSearchResponse> {
+  const API_BASE = "https://frontend-take-home-service.fetch.com";
+  const response = await fetch(`${API_BASE}/locations/search`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to search locations: ${response.status} ${errorText}`
+    );
+  }
+
   return response.json();
 }
