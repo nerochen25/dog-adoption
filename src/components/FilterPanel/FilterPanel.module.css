@@ -1,0 +1,61 @@
+.filter_top_panel {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 1rem;
+  row-gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.filter_bottom_panel {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.pill_container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ececec;
+  background-color: #212121;
+  padding: 0.25rem;
+  padding-left: 0.6rem;
+  border-radius: 10px;
+  font-weight: 600;
+  column-gap: 0.25rem;
+}
+
+.delete_btn {
+  background-color: transparent !important;
+  color: #ececec;
+  border: none;
+  border-radius: 50% !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete_btn:hover {
+  color: #ffd700 !important;
+}

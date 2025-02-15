@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+.label {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.input {
+  min-width: 70px;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.separator {
+  font-weight: bold;
+}

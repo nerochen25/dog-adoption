@@ -1,6 +1,7 @@
 import React from "react";
 import { Dog } from "../../types";
 import DogCard from "../DogCard/DogCard";
+import Button from "../Button/Button";
 import styles from "./FavoritePanel.module.css";
 
 interface FavoritesPanelProps {
@@ -16,7 +17,6 @@ const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
 }) => {
   return (
     <div className={styles.root}>
-      <h3>Favorites</h3>
       {favorites.length === 0 ? (
         <p>No favorites selected.</p>
       ) : (
@@ -27,18 +27,25 @@ const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
               index={index}
               dog={dog}
               isFavorite={true}
+              hideDogInfo={true}
+              hideFavoriteToggle={true}
+              showXCloseIcon={true}
+              className={styles.dog_card}
               onFavoriteToggle={onFavoriteToggle}
             />
           ))}
         </div>
       )}
-      <button
-        className={styles.generate_match_btn}
-        onClick={onMatch}
-        disabled={favorites.length === 0}
-      >
-        Generate Match
-      </button>
+      <div className={styles.generate_match_btn_container}>
+        <Button
+          onClick={onMatch}
+          size="small"
+          disabled={favorites.length === 0}
+          className={styles.generate_match_btn}
+        >
+          Generate Match
+        </Button>
+      </div>
     </div>
   );
 };
