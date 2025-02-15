@@ -8,19 +8,19 @@ import styles from "./DogCard.module.css";
 
 interface DogCardProps {
   dog: Dog;
-  index: number;
+  index?: number;
   isFavorite: boolean;
   hideDogInfo?: boolean;
   hideFavoriteToggle?: boolean;
   showXCloseIcon?: boolean;
   hideStar?: boolean;
   className?: string;
-  onFavoriteToggle: (dog: Dog) => void;
+  onFavoriteToggle?: (dog: Dog) => void;
 }
 
 const DogCard: React.FC<DogCardProps> = ({
   dog,
-  index,
+  index = 0,
   isFavorite,
   hideDogInfo = false,
   hideFavoriteToggle = false,
@@ -30,7 +30,7 @@ const DogCard: React.FC<DogCardProps> = ({
   className = "",
 }) => {
   const handleFavoriteClick = useCallback(() => {
-    onFavoriteToggle(dog);
+    onFavoriteToggle && onFavoriteToggle(dog);
   }, [onFavoriteToggle, dog]);
 
   return (

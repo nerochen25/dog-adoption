@@ -35,6 +35,7 @@ const AgeRangeFilter: React.FC<AgeRangeFilterProps> = ({
           min={0}
           max={maxAge ?? 30}
           value={minAge !== undefined ? minAge.toString() : ""}
+          debounceDelay={800}
           onDebouncedChange={handleMinChange}
         />
         <strong className={styles.separator}>&nbsp;-&nbsp;</strong>
@@ -45,6 +46,7 @@ const AgeRangeFilter: React.FC<AgeRangeFilterProps> = ({
           min={minAge ?? 0}
           max={30}
           value={maxAge !== undefined ? maxAge.toString() : ""}
+          debounceDelay={800}
           onDebouncedChange={handleMaxChange}
         />
       </div>

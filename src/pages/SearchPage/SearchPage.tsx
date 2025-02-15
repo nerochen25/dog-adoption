@@ -112,6 +112,10 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
     [pagination]
   );
 
+  const matchedDog = useMemo(() => {
+    return matchResult ? favorites.find((fav) => fav.id == matchResult) : null;
+  }, [matchResult, favorites]);
+
   // Save filter dataset to localStorage whenever any filter changes.
   useEffect(() => {
     const filters = {
@@ -149,20 +153,24 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
     loadBreeds();
   }, []);
 
-  // Reload dogs whenever filters change (breed, sort order, or location).
+  // Combine all filters into one object.
+  const filters = useMemo(
+    () => ({
+      selectedBreeds,
+      sortedBy,
+      sortOrder,
+      selectedZipCodes,
+      ageMin,
+      ageMax,
+    }),
+    [selectedBreeds, sortedBy, sortOrder, selectedZipCodes, ageMin, ageMax]
+  );
+
+  // Reload dogs whenever any filter changes.
   useEffect(() => {
     setOffset(0);
     loadDogs();
-  }, [selectedBreeds, sortOrder, sortedBy, selectedZipCodes]);
-
-  // Debounce the age range filter changes.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // When age range inputs change, re-run the search with the age parameters.
-      loadDogs({ ageMin, ageMax });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [ageMin, ageMax]);
+  }, [filters]);
 
   // Load dogs based on filters and pagination.
   const loadDogs = useCallback(
@@ -230,7 +238,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
   }, [pagination, loadDogs]);
 
   const handlePrevPage = useCallback(() => {
-    console.log({ pagination });
     if (pagination.prev) {
       loadDogs(pagination.prev);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -332,23 +339,26 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
     []
   );
 
+  const onMatchModalClose = useCallback(() => setIsMatchModalOpen(false), []);
+
   return (
     <div className={styles.root}>
+      {loading && <LoadingSpinner />}
       <div className={styles.top}>
         <HeaderPanel
           user={user}
-          onLogoutClick={handleLogoutClick}
           favorites={favorites}
+          onLogoutClick={handleLogoutClick}
           onViewFavoritesToggle={onViewFavoritesToggle}
         />
         <FilterPanel
           selectedBreeds={selectedBreeds}
           breeds={breeds}
+          ageMin={ageMin}
+          ageMax={ageMax}
           sortedBy={sortedBy}
           sortOrder={sortOrder}
           selectedZipCodes={selectedZipCodes}
-          ageMin={ageMin}
-          ageMax={ageMax}
           onSelectedBreedsChange={onSelectedBreedsChange}
           onSortedByChange={onSortedByChange}
           onSortOrderChange={onSortOrderChange}
@@ -359,7 +369,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
           onZipCodeDelete={onZipCodeDelete}
         />
       </div>
-      {loading && <LoadingSpinner />}
       <div className={styles.main_content}>
         <DogList
           loading={loading}
@@ -390,32 +399,18 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
       </Modal>
 
       <Modal
-        isOpen={isMatchModalOpen}
-        onClose={() => setIsMatchModalOpen(false)}
+        isOpen={isMatchModalOpen && Boolean(matchedDog)}
+        onClose={onMatchModalClose}
         title={"Your Match"}
       >
-        {matchResult && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {favorites
-              .filter((dog) => dog.id === matchResult)
-              .map((dog, index) => (
-                <DogCard
-                  key={dog.id}
-                  dog={dog}
-                  index={index}
-                  isFavorite={true}
-                  hideFavoriteToggle={true}
-                  hideStar={false}
-                  onFavoriteToggle={(dog) => {}}
-                />
-              ))}
-          </div>
+        {matchedDog && (
+          <DogCard
+            key={matchedDog.id}
+            dog={matchedDog}
+            isFavorite={true}
+            hideFavoriteToggle={true}
+            hideStar={false}
+          />
         )}
       </Modal>
     </div>
