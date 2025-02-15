@@ -32,3 +32,15 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.error_modal {
+  width: auto;
+  height: auto;
+}
+
+.error_content {
+  display: flex;
+  line-height: 1.5rem;
+  align-items: center;
+  justify-content: flex-start;
+}

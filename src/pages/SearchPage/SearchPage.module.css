@@ -38,6 +38,18 @@
   justify-content: space-between;
 }
 
+.error_modal {
+  width: auto;
+  height: auto;
+}
+
+.error_content {
+  display: flex;
+  line-height: 1.5rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 @media (max-width: 768px) {
   .top,
   .footer {
