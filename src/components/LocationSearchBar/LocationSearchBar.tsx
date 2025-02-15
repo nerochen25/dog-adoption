@@ -6,6 +6,7 @@ import {
 } from "../../services/api";
 import LocationDropdown from "./LocationDropdown/LocationDropdown";
 import Input from "../Input/Input";
+import Modal from "../Modal/Modal";
 import styles from "./LocationSearchBar.module.css";
 
 interface LocationSearchBarProps {
@@ -18,6 +19,7 @@ const LocationSearchBar: React.FC<LocationSearchBarProps> = ({
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Location[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -40,7 +42,17 @@ const LocationSearchBar: React.FC<LocationSearchBarProps> = ({
         );
         setSuggestions(filteredResults);
       } catch (error) {
-        console.error("Error searching locations:", error);
+        if (error instanceof Error) {
+          setError(error.message);
+          console.error(
+            "Error searching locations:",
+            error.message,
+            error.name
+          );
+        } else {
+          setError("An unknown error occurred");
+          console.error("Error searching locations:", error);
+        }
       }
       setLoading(false);
     }, 300);
@@ -83,6 +95,15 @@ const LocationSearchBar: React.FC<LocationSearchBarProps> = ({
           onClose={() => setIsDropdownOpen(false)}
         />
       )}
+
+      <Modal
+        isOpen={Boolean(error)}
+        onClose={() => setError(null)}
+        title={"❌  Error"}
+        className={styles.error_modal}
+      >
+        <p className={styles.error_content}>{error}</p>
+      </Modal>
     </div>
   );
 };

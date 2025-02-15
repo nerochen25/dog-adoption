@@ -96,6 +96,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
     useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [offset, setOffset] = useState<number>(0);
   const [pagination, setPagination] = useState<PaginationInfo>({
     next: null,
@@ -147,7 +148,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
         const breedList = await fetchBreeds();
         setBreeds(breedList);
       } catch (error) {
-        console.error("Failed to load breeds:", error);
+        if (error instanceof Error) {
+          setError(error.message);
+          console.error("Failed to load breeds:", error.message);
+        } else {
+          setError("An unknown error occurred");
+          console.error("Failed to load breeds:", error);
+        }
       }
     };
     loadBreeds();
@@ -223,7 +230,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
           total: searchResponse.total,
         });
       } catch (error) {
-        console.error("Error loading dogs:", error);
+        if (error instanceof Error) {
+          setError(error.message);
+          console.error("Error loading dogs:", error.message, error.name);
+        } else {
+          setError("An unknown error occurred");
+          console.error("Error loading dogs:", error);
+        }
       }
       setLoading(false);
     },
@@ -248,7 +261,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
     try {
       onLogout();
     } catch (error) {
-      console.error("Logout failed", error);
+      if (error instanceof Error) {
+        setError(error.message);
+        console.error("Logout failed:", error.message);
+      } else {
+        setError("An unknown error occurred");
+        console.error("Logout failed:", error);
+      }
     }
   }, [onLogout]);
 
@@ -272,7 +291,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
       setMatchResult(matchResponse.match);
       setIsMatchModalOpen(true);
     } catch (error) {
-      console.error("Error generating match:", error);
+      if (error instanceof Error) {
+        setError(error.message);
+        console.error("Error generating match:", error.message);
+      } else {
+        setError("An unknown error occurred");
+        console.error("Error generating match:", error);
+      }
     }
   }, [favorites]);
 
@@ -412,6 +437,15 @@ const SearchPage: React.FC<SearchPageProps> = ({ user, onLogout }) => {
             hideStar={false}
           />
         )}
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(error)}
+        onClose={() => setError(null)}
+        title={"❌  Error"}
+        className={styles.error_modal}
+      >
+        <p className={styles.error_content}>{error}</p>
       </Modal>
     </div>
   );
